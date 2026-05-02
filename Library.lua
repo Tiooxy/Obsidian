@@ -1613,15 +1613,18 @@ function Library:AddDraggableLabel(Text: string)
     return Table
 end
 
-function Library:AddDraggableIconButton(IconId: string, Func, ExcludeScaling: boolean?)
+function Library:AddDraggableButton(Text: string, Func, ExcludeScaling: boolean?)
     local Table = {}
-    local SizeXY = 45 -- Ubah angka ini untuk memperbesar/memperkecil ukuran tombol
+    
+    -- Deteksi apakah 'Text' adalah ID Ikon atau teks biasa
+    local IsIcon = string.find(Text, "rbxassetid://") or string.find(Text, "http")
+    
+    -- Gunakan ImageButton jika Ikon, TextButton jika Teks
+    local ElementType = IsIcon and "ImageButton" or "TextButton"
 
-    local Button = New("ImageButton", {
+    local Button = New(ElementType, {
         BackgroundColor3 = "BackgroundColor",
         Position = UDim2.fromOffset(6, 6),
-        Size = UDim2.fromOffset(SizeXY, SizeXY), -- Ukuran persegi wajib untuk membuat lingkaran
-        Image = IconId, -- Memasukkan ID Ikon (contoh: "rbxassetid://12345678")
         ZIndex = 10,
         Parent = ScreenGui,
     })
@@ -1629,7 +1632,8 @@ function Library:AddDraggableIconButton(IconId: string, Func, ExcludeScaling: bo
     table.insert(
         Library.Corners, 
         New("UICorner", {
-            CornerRadius = UDim.new(1, 0), -- UDim.new(1, 0) akan membuatnya bulat penuh seperti bola
+            -- Jika ikon, buat radius 1,0 agar bulat bola. Jika teks, ikuti library.
+            CornerRadius = IsIcon and UDim.new(1, 0) or UDim.new(0, Library.CornerRadius),
             Parent = Button,
         })
     )
@@ -1642,21 +1646,34 @@ function Library:AddDraggableIconButton(IconId: string, Func, ExcludeScaling: bo
             })
         )
     end
-    
     Library:AddOutline(Button)
 
     Button.MouseButton1Click:Connect(function()
         Library:SafeCallback(Func, Table)
     end)
-    
     Library:MakeDraggable(Button, Button, true)
 
     Table.Button = Button
 
-    -- Mengganti SetText menjadi SetIcon
-    function Table:SetIcon(NewIconId: string)
-        Button.Image = NewIconId
+    -- Fungsi SetText yang bisa menangani Text dan Icon sekaligus
+    function Table:SetText(NewText: string)
+        if IsIcon then
+            -- Set up untuk Ikon
+            Button.Image = NewText
+            Button.Size = UDim2.fromOffset(45, 45) -- Wajib persegi agar menjadi bulat bola (bisa diubah ukurannya)
+            -- Hilangkan background jika ikon punya background transparan (opsional)
+            -- Button.BackgroundTransparency = 1 
+        else
+            -- Set up untuk Teks
+            local X, Y = Library:GetTextBounds(NewText, Library.Scheme.Font, 16)
+            Button.TextSize = 16
+            Button.Text = NewText
+            Button.Size = UDim2.fromOffset(X * 2, Y * 2)
+        end
     end
+    
+    -- Eksekusi SetText pertama kali
+    Table:SetText(Text)
 
     return Table
 end
