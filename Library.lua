@@ -1613,23 +1613,27 @@ function Library:AddDraggableLabel(Text: string)
     return Table
 end
 
-function Library:AddDraggableButton(Text: string, Func, ExcludeScaling: boolean?)
+function Library:AddDraggableIconButton(IconId: string, Func, ExcludeScaling: boolean?)
     local Table = {}
+    local SizeXY = 45 -- Ubah angka ini untuk memperbesar/memperkecil ukuran tombol
 
-    local Button = New("TextButton", {
+    local Button = New("ImageButton", {
         BackgroundColor3 = "BackgroundColor",
         Position = UDim2.fromOffset(6, 6),
-        TextSize = 16,
+        Size = UDim2.fromOffset(SizeXY, SizeXY), -- Ukuran persegi wajib untuk membuat lingkaran
+        Image = IconId, -- Memasukkan ID Ikon (contoh: "rbxassetid://12345678")
         ZIndex = 10,
         Parent = ScreenGui,
     })
+    
     table.insert(
         Library.Corners, 
         New("UICorner", {
-            CornerRadius = UDim.new(0, Library.CornerRadius),
+            CornerRadius = UDim.new(1, 0), -- UDim.new(1, 0) akan membuatnya bulat penuh seperti bola
             Parent = Button,
         })
     )
+    
     if not ExcludeScaling then
         table.insert(
             Library.Scales,
@@ -1638,22 +1642,21 @@ function Library:AddDraggableButton(Text: string, Func, ExcludeScaling: boolean?
             })
         )
     end
+    
     Library:AddOutline(Button)
 
     Button.MouseButton1Click:Connect(function()
         Library:SafeCallback(Func, Table)
     end)
+    
     Library:MakeDraggable(Button, Button, true)
 
     Table.Button = Button
 
-    function Table:SetText(Text: string)
-        local X, Y = Library:GetTextBounds(Text, Library.Scheme.Font, 16)
-
-        Button.Text = Text
-        Button.Size = UDim2.fromOffset(X * 2, Y * 2)
+    -- Mengganti SetText menjadi SetIcon
+    function Table:SetIcon(NewIconId: string)
+        Button.Image = NewIconId
     end
-    Table:SetText(Text)
 
     return Table
 end
@@ -8598,7 +8601,7 @@ function Library:CreateWindow(WindowInfo)
     end
 
     if Library.IsMobile then
-        local ToggleButton = Library:AddDraggableButton("Toggle", function()
+        local ToggleButton = Library:AddDraggableButton("rbxassetid://102639104920386", function()
             Library:Toggle()
         end, true)
 
