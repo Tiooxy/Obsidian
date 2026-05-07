@@ -1597,7 +1597,33 @@ function Library:AddDraggableLabel(Text: string)
         })
     )
     Library:AddOutline(Label)
+    -- ANIMATED BORDER
+local Stroke = Instance.new("UIStroke")
+Stroke.Thickness = 2
+Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+Stroke.Parent = Button
 
+local Gradient = Instance.new("UIGradient")
+Gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 0, 0)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+}
+Gradient.Rotation = 0
+Gradient.Parent = Stroke
+
+-- ROTATE ANIMATION
+task.spawn(function()
+    while Button and Button.Parent do
+        Gradient.Rotation += 2
+        
+        if Gradient.Rotation >= 360 then
+            Gradient.Rotation = 0
+        end
+        
+        task.wait()
+    end
+end)
     Library:MakeDraggable(Label, Label, true)
 
     Table.Label = Label
