@@ -1506,31 +1506,19 @@ function Library:MakeLine(Frame: GuiObject, Info)
 end
 
 function Library:AddOutline(Frame: GuiObject, Animated: boolean?)
-    local OutlineStroke = New("UIStroke", {
-        Color = "OutlineColor",
-        Thickness = Animated and 2.5 or 1,
-        Transparency = 0,
-        ZIndex = 2,
-        Parent = Frame,
-    })
-
-    local ShadowStroke = New("UIStroke", {
-        Color = "DarkColor",
-        Thickness = Animated and 0 or 1.5,
-        Transparency = Animated and 1 or 0,
-        ZIndex = 1,
-        Parent = Frame,
-    })
-
     if Animated then
+        local Stroke = Instance.new("UIStroke")
+        Stroke.Thickness = 3
+        Stroke.Color = Color3.fromRGB(255,255,255)
+        Stroke.Parent = Frame
+
         local Gradient = Instance.new("UIGradient")
         Gradient.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(255,0,0)),
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(0,0,0)),
             ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255,255,255)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(255,0,0))
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(0,0,0))
         })
-
-        Gradient.Parent = OutlineStroke
+        Gradient.Parent = Stroke
 
         game:GetService("TweenService"):Create(
             Gradient,
@@ -1544,7 +1532,23 @@ function Library:AddOutline(Frame: GuiObject, Animated: boolean?)
                 Rotation = 360
             }
         ):Play()
+
+        return Stroke
     end
+
+    local OutlineStroke = New("UIStroke", {
+        Color = "OutlineColor",
+        Thickness = 1,
+        ZIndex = 2,
+        Parent = Frame,
+    })
+
+    local ShadowStroke = New("UIStroke", {
+        Color = "DarkColor",
+        Thickness = 1.5,
+        ZIndex = 1,
+        Parent = Frame,
+    })
 
     return OutlineStroke, ShadowStroke
 end
