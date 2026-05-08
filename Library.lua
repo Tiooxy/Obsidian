@@ -1508,14 +1508,16 @@ end
 function Library:AddOutline(Frame: GuiObject, Animated: boolean?)
     local OutlineStroke = New("UIStroke", {
         Color = "OutlineColor",
-        Thickness = 1,
+        Thickness = Animated and 2.5 or 1,
+        Transparency = 0,
         ZIndex = 2,
         Parent = Frame,
     })
 
     local ShadowStroke = New("UIStroke", {
         Color = "DarkColor",
-        Thickness = 1.5,
+        Thickness = Animated and 0 or 1.5,
+        Transparency = Animated and 1 or 0,
         ZIndex = 1,
         Parent = Frame,
     })
@@ -1527,6 +1529,7 @@ function Library:AddOutline(Frame: GuiObject, Animated: boolean?)
             ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255,255,255)),
             ColorSequenceKeypoint.new(1, Color3.fromRGB(255,0,0))
         })
+
         Gradient.Parent = OutlineStroke
 
         game:GetService("TweenService"):Create(
