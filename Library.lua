@@ -1506,19 +1506,37 @@ function Library:MakeLine(Frame: GuiObject, Info)
     return Line
 end
 
-function Library:AddOutline(Frame: GuiObject)
+function Library:AddOutline(Frame: GuiObject, Animated: boolean?)
     local OutlineStroke = New("UIStroke", {
         Color = "OutlineColor",
         Thickness = 1,
         ZIndex = 2,
         Parent = Frame,
     })
+
     local ShadowStroke = New("UIStroke", {
         Color = "DarkColor",
         Thickness = 1.5,
         ZIndex = 1,
         Parent = Frame,
     })
+
+    if Animated then
+        local Gradient = Instance.new("UIGradient")
+        Gradient.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(255,0,0)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255,255,255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(255,0,0))
+        }
+        Gradient.Parent = OutlineStroke
+
+        game:GetService("RunService").RenderStepped:Connect(function()
+            if OutlineStroke.Parent then
+                Gradient.Rotation = (Gradient.Rotation + 1) % 360
+            end
+        end)
+    end
+
     return OutlineStroke, ShadowStroke
 end
 
@@ -1647,7 +1665,7 @@ function Library:AddDraggableButton(Text: string, Func, ExcludeScaling: boolean?
         )
     end
     
-Library:AddOutline(Button)
+Library:AddOutline(Button, true)
     
     Button.MouseButton1Click:Connect(function()
         Library:SafeCallback(Func, Table)
