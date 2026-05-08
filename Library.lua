@@ -1286,27 +1286,6 @@ function Library:ResetCursorIcon()
     CursorCustomImage.Visible = false
     CursorCustomImage.Size = UDim2.fromOffset(20, 20)
 end
-
-local function ApplyRotatingBorder(obj)
-    local stroke = Instance.new("UIStroke")
-    stroke.Thickness = 2
-    stroke.Parent = obj
-
-    local grad = Instance.new("UIGradient")
-    grad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
-    })
-    grad.Parent = stroke
-
-    TweenService:Create(
-        grad,
-        TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1),
-        {Rotation = 360}
-    ):Play()
-end
-
 function Library:ChangeCursorIcon(ImageId: string)
     if not ImageId or ImageId == "" then
         Library:ResetCursorIcon()
@@ -1526,7 +1505,7 @@ function Library:MakeLine(Frame: GuiObject, Info)
     return Line
 end
 
-function Library:AddOutline(Frame: GuiObject)
+function Library:AddOutline(Frame: GuiObject, Animated: boolean?)
     local OutlineStroke = New("UIStroke", {
         Color = "OutlineColor",
         Thickness = 1,
@@ -1540,6 +1519,29 @@ function Library:AddOutline(Frame: GuiObject)
         ZIndex = 1,
         Parent = Frame,
     })
+
+    if Animated then
+        local Gradient = Instance.new("UIGradient")
+        Gradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(255,0,0)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255,255,255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(255,0,0))
+        })
+        Gradient.Parent = OutlineStroke
+
+        game:GetService("TweenService"):Create(
+            Gradient,
+            TweenInfo.new(
+                2,
+                Enum.EasingStyle.Linear,
+                Enum.EasingDirection.InOut,
+                -1
+            ),
+            {
+                Rotation = 360
+            }
+        ):Play()
+    end
 
     return OutlineStroke, ShadowStroke
 end
@@ -1669,7 +1671,7 @@ function Library:AddDraggableButton(Text: string, Func, ExcludeScaling: boolean?
         )
     end
     
-ApplyRotatingBorder(Button)
+Library:AddOutline(Button, true)
     
     Button.MouseButton1Click:Connect(function()
         Library:SafeCallback(Func, Table)
