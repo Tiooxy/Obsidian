@@ -1596,7 +1596,7 @@ function Library:AddDraggableLabel(Text: string)
             Parent = Label,
         })
     )
-    Library:AddOutline(Label)
+    -- Library:AddOutline(Label)
     -- ANIMATED BORDER
 local Stroke = Instance.new("UIStroke")
 Stroke.Thickness = 2
