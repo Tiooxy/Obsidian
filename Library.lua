@@ -1646,7 +1646,7 @@ function Library:AddDraggableButton(Text: string, Func, ExcludeScaling: boolean?
             })
         )
     end
-    Library:AddOutline(Button)
+   -- Library:AddOutline(Button)
 -- ANIMATED BORDER
 local Stroke = Instance.new("UIStroke")
 Stroke.Thickness = 2
