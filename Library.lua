@@ -1505,32 +1505,29 @@ function Library:MakeLine(Frame: GuiObject, Info)
     return Line
 end
 
-function Library:AddOutline(Frame: GuiObject, Animated: boolean?)
+function Library:AddOutline(Frame, Animated)
     if Animated then
         local Stroke = Instance.new("UIStroke")
-        Stroke.Thickness = 3
-        Stroke.Color = Color3.fromRGB(255,255,255)
+        Stroke.Thickness = 2
+        Stroke.Color = Color3.fromRGB(255, 0, 0) -- Diubah menjadi Warna Merah
         Stroke.Parent = Frame
 
         local Gradient = Instance.new("UIGradient")
-        Gradient.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(0,0,0)),
-            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255,255,255)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(0,0,0))
+        -- Memanipulasi transparansi agar hanya sebagian kecil yang menyala (efek laser)
+        Gradient.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 1),    -- Transparan penuh
+            NumberSequenceKeypoint.new(0.4, 1),
+            NumberSequenceKeypoint.new(0.5, 0),  -- Titik terang (nyala merah)
+            NumberSequenceKeypoint.new(0.6, 1),
+            NumberSequenceKeypoint.new(1, 1)     -- Transparan penuh
         })
         Gradient.Parent = Stroke
 
+        -- Putar gradient-nya agar laser terlihat bergerak mengelilingi UI
         game:GetService("TweenService"):Create(
             Gradient,
-            TweenInfo.new(
-                2,
-                Enum.EasingStyle.Linear,
-                Enum.EasingDirection.InOut,
-                -1
-            ),
-            {
-                Rotation = 360
-            }
+            TweenInfo.new(1.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1),
+            { Rotation = 360 }
         ):Play()
 
         return Stroke
@@ -1692,7 +1689,7 @@ Library:AddOutline(Button, true)
         if IsIcon then
             -- Set up untuk Ikon
             Button.Image = NewText
-            Button.Size = UDim2.fromOffset(45, 45) -- Wajib persegi agar menjadi bulat bola (bisa diubah ukurannya)
+            Button.Size = UDim2.fromOffset(35, 35) -- Wajib persegi agar menjadi bulat bola (bisa diubah ukurannya)
             -- Hilangkan background jika ikon punya background transparan (opsional)
             -- Button.BackgroundTransparency = 1 
         else
