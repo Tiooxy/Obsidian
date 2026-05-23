@@ -1516,9 +1516,9 @@ function Library:AddOutline(Frame, Animated)
         -- Memanipulasi transparansi agar hanya sebagian kecil yang menyala (efek laser)
         Gradient.Transparency = NumberSequence.new({
             NumberSequenceKeypoint.new(0, 1),    -- Transparan penuh
-            NumberSequenceKeypoint.new(0.4, 1),
+            NumberSequenceKeypoint.new(0.2, 1),
             NumberSequenceKeypoint.new(0.5, 0),  -- Titik terang (nyala merah)
-            NumberSequenceKeypoint.new(0.6, 1),
+            NumberSequenceKeypoint.new(0.8, 1),
             NumberSequenceKeypoint.new(1, 1)     -- Transparan penuh
         })
         Gradient.Parent = Stroke
