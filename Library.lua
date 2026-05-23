@@ -6453,7 +6453,7 @@ function Library:CreateWindow(WindowInfo)
                 Parent = MainFrame,
             })
         )
-        Library:AddOutline(MainFrame)
+        Library:AddOutline(MainFrame, true)
         Library:MakeLine(MainFrame, {
             Position = UDim2.fromOffset(0, 48),
             Size = UDim2.new(1, 0, 0, 1),
